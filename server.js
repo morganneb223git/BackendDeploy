@@ -12,12 +12,8 @@ const { errorHandler } = require('./middlewares/errorMiddleware'); // Custom err
 const accountRouter = require('./controllers/accountController'); // Router for account-related routes
 const userRouter = require('./controllers/userController'); // Router for user-related routes
 const transactionRouter = require('./controllers/transactionController'); // Router for transaction-related routes
-
-/*
-const fs = require('fs'); // File system module for reading SSL certificate files
-const https = require('https'); // HTTPS module for HTTPS server
-const http = require('http'); // HTTP module for HTTP server
-*/
+const fs = require('fs');
+const https = require('https');
 
 const app = express();
 
