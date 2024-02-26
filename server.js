@@ -3,16 +3,21 @@ require('dotenv').config();
 
 // Import necessary modules
 const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
-const rateLimit = require('express-rate-limit');
-const { errorHandler } = require('./middlewares/errorMiddleware');
-const accountRouter = require('./controllers/accountController');
-const userRouter = require('./controllers/userController');
-const transactionRouter = require('./controllers/transactionController');
-const http = require('http'); // Ensure this is included if you're using it for the server
+const cors = require('cors'); // CORS middleware for handling cross-origin requests
+const helmet = require('helmet'); // Helmet helps secure Express apps by setting various HTTP headers
+const bodyParser = require('body-parser'); // Parse incoming request bodies in a middleware
+const mongoose = require('mongoose'); // MongoDB object modeling tool
+const rateLimit = require('express-rate-limit'); // Basic rate-limiting middleware
+const { errorHandler } = require('./middlewares/errorMiddleware'); // Custom error handling middleware
+const accountRouter = require('./controllers/accountController'); // Router for account-related routes
+const userRouter = require('./controllers/userController'); // Router for user-related routes
+const transactionRouter = require('./controllers/transactionController'); // Router for transaction-related routes
+
+/*
+const fs = require('fs'); // File system module for reading SSL certificate files
+const https = require('https'); // HTTPS module for HTTPS server
+const http = require('http'); // HTTP module for HTTP server
+*/
 
 const app = express();
 
@@ -49,8 +54,13 @@ mongoose.connect(process.env.MONGODB_URI)
 // Apply the custom error handling middleware
 app.use(errorHandler);
 
-// Network configuration
-const PORT = process.env.PORT || 5000;
-http.createServer(app).listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+
+// Environment-specific network configuration
+const PORT = process.env.PORT || 5000; // Default to port 5000 if no PORT env var is specified
+const options = {
+    key: fs.readFileSync(process.env.SSL_KEY_PATH), // Path to SSL key
+    cert: fs.readFileSync(process.env.SSL_CERT_PATH), // Path to SSL certificate
+  };
+  https.createServer(options, app).listen(PORT, () => {
+    console.log(`HTTPS Server running on port ${PORT}`);
+  });
